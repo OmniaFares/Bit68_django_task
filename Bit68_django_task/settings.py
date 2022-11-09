@@ -40,7 +40,10 @@ INSTALLED_APPS = [
     'rest_framework',
     'Bit68_django_task',
     'user',
+    'jwttoken'
 ]
+
+AUTH_USER_MODEL = "user.CustomUser"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -79,7 +82,7 @@ WSGI_APPLICATION = 'Bit68_django_task.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'bit68',
+        'NAME': 'django_task',
         'USER': 'root',
         'PASSWORD': '',
         'HOST': 'localhost',
