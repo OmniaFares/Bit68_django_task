@@ -9,6 +9,8 @@ from rest_framework.views import APIView
 from .serializers import LoginSerializer, RegisterSerializer
 from django.contrib.auth import authenticate
 from rest_framework.response import Response
+from .authentication import Authentication
+from rest_framework.permissions import IsAuthenticated
 
 
 def get_random(length):
@@ -17,7 +19,7 @@ def get_random(length):
 
 def get_access_token(payload):
     return jwt.encode(
-        {"exp": datetime.now() + timedelta(minutes=5), **payload},
+        {"exp": datetime.now() + timedelta(minutes=60), **payload},
         settings.SECRET_KEY,
         algorithm="HS256"
     )
@@ -46,6 +48,8 @@ class LoginView(APIView):
         if not user:
             return Response({"error": "Invalid email or password"}, status="400")
 
+        Jwt.objects.filter(user_id=user.id).delete()
+
         access = get_access_token({"user_id": user.id})
         refresh = get_refresh_token()
 
@@ -64,3 +68,36 @@ class RegisterView(APIView):
         CustomUser.objects._create_user(**serializer.validated_data)
 
         return Response({"success": "Registered Successfully"})
+
+
+class GetSecuredInfo(APIView):
+   # permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        print(request.user)
+        return Response({"success": "test auth"})
+
+
+# class RefreshView(APIView):
+#     serializer_class = RefreshSerializer
+#
+#     def post(self, request):
+#         serializer = self.serializer_class(data=request.data)
+#         serializer.is_valid(raise_exception=True)
+#
+#         try:
+#             active_jwt = Jwt.objects.get(refresh=serializer.validated_data['refresh'])
+#         except Jwt.DoesNotExist:
+#             return Response({"error": "refresh token not found"}, status="400")
+#
+#         if not Authentication.verify_token(serializer.validated_data["refresh"]):
+#             return Response({"error": "token has expired"}, status="400")
+#
+#         access = get_access_token({"user_id": active_jwt.user.id})
+#         refresh = get_refresh_token()
+#
+#         active_jwt.access = access
+#         active_jwt.refresh = refresh
+#         active_jwt.save()
+#
+#         return Response({"access": access, "refresh": refresh})

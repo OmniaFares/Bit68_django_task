@@ -131,3 +131,11 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# REST_FRAMEWORK = {
+#     "DEFAULT_AUTHENTICATION_CLASSES": ("jwttoken.authentication.Authentication", )
+# }
+#
+# JWT_AUTH = {
+#     'JWT_AUTH_HEADER_PREFIX': 'Bearer',
+# }

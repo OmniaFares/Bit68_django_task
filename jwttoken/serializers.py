@@ -9,3 +9,7 @@ class LoginSerializer(serializers.Serializer):
 class RegisterSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField()
+
+
+# class RefreshSerializer(serializers.Serializer):
+#     refresh = serializers.CharField()
