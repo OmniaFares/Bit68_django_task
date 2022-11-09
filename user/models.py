@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
+import app.models
 
 
 class CustomUserManager(BaseUserManager):
@@ -35,6 +36,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=True)
     is_active = models.BooleanField(default=True)
+    cart = models.OneToOneField('app.Cart', related_name="cart_user", on_delete=models.CASCADE, null=True)
+    orders = models.ForeignKey('app.Order', related_name="user_orders", on_delete=models.CASCADE, null=True)
 
     USERNAME_FIELD = "email"
     objects = CustomUserManager()

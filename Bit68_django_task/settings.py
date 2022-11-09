@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'Bit68_django_task',
     'user',
-    'jwttoken'
+    'jwttoken',
+    'app'
 ]
 
 AUTH_USER_MODEL = "user.CustomUser"
