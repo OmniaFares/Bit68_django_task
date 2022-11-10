@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
-import app.models
+from app.models import Cart
 
 
 class CustomUserManager(BaseUserManager):
@@ -10,7 +10,14 @@ class CustomUserManager(BaseUserManager):
         email = self.normalize_email(email)
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
+
         user.save()
+
+        current_user = CustomUser.objects.get(email=user)
+        cart = Cart.objects.create(user=current_user)
+        current_user.cart = cart
+        current_user.save()
+
         return user
 
     def create_superuser(self, email, password, **extra_fields):
