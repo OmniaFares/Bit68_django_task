@@ -6,7 +6,7 @@ from user.models import CustomUser
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ['id', 'name', 'cart', 'orders']
+        fields = ['id', 'cart', 'orders']
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -18,10 +18,10 @@ class ProductSerializer(serializers.ModelSerializer):
 class CartSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cart
-        fields = ['id', 'user', 'products']
+        fields = ['id',  'products']
 
     def to_representation(self, instance):
-        self.fields['user'] = UserSerializer(read_only=True)
+        #self.fields['user'] = UserSerializer(read_only=True)
         self.fields['products'] = ProductSerializer(many=True, read_only=True)
         return super(CartSerializer, self).to_representation(instance)
 
@@ -29,9 +29,9 @@ class CartSerializer(serializers.ModelSerializer):
 class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
-        fields = ['id', 'user', 'cart']
+        fields = ['id', 'cart']
 
     def to_representation(self, instance):
-        self.fields['user'] = UserSerializer(read_only=True)
+        #self.fields['user'] = UserSerializer(read_only=True)
         self.fields['cart'] = CartSerializer(read_only=True)
         return super(OrderSerializer, self).to_representation(instance)
