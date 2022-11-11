@@ -15,7 +15,6 @@ class Cart(models.Model):
     products = models.ManyToManyField(Product, related_name="products_carts")
 
 
-
 class Order(models.Model):
     user = models.ForeignKey('user.CustomUser', related_name="order_user", on_delete=models.CASCADE)
     cart = models.ForeignKey(Cart, related_name="order_cart", on_delete=models.CASCADE)

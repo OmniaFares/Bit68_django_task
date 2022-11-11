@@ -38,7 +38,6 @@ def get_user_orders(request, id):
             return Response(OrderSerializer(user_orders).data)
 
 
-
 class ProductView(APIView):
     serializer_class = ProductSerializer
 
@@ -53,36 +52,52 @@ class ProductView(APIView):
             return Response(status=status.HTTP_404_NOT_FOUND)
 
     def get(self, request):
-        products = Product.objects.all().order_by('price')
-        products = self.serializer_class(products, many=True)
-        return Response(products.data)
+        if request.data:
+            product = Product.objects.get(name=request.data['name'])
+            product = self.serializer_class(product)
+            return Response(product.data)
+        else:
+            products = Product.objects.all().order_by('price')
+            products = self.serializer_class(products, many=True)
+            return Response(products.data)
 
 
 class CartView(APIView):
     serializer_class = CartSerializer
 
     def post(self, request):
-        cart = self.serializer_class(data=request.data)
-        print(request.data)
-        print(cart)
-        if cart.is_valid():
-            cart.save()
-            return Response(cart.data, status=status.HTTP_201_CREATED)
-        else:
+        try:
+            user = CustomUser.objects.get(id=request.data['user'])
+        except CustomUser.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
+
+        try:
+            products = Product.objects.get(id=request.data['products'])
+        except Product.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        cart = Cart.objects.get(user=user)
+        cart.products.add(products)
+
+        return Response({"success": "Product added successfully to cart", "Cart": CartSerializer(cart).data})
 
 
 class OrderView(APIView):
     serializer_class = OrderSerializer
 
     def post(self, request):
-        order = self.serializer_class(data=request.data)
-        print(request.data)
-        print(order)
-        if order.is_valid():
-            order.save()
-            return Response(order.data, status=status.HTTP_201_CREATED)
-        else:
+        try:
+            user = CustomUser.objects.get(id=request.data['user'])
+        except CustomUser.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
+
+        try:
+            cart = Cart.objects.get(id=request.data['cart'])
+        except Cart.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        order = Order.objects.create(user=user, cart=cart)
+
+        return Response({"success": "Order has created successfully", "Order": OrderSerializer(order).data})
 
 

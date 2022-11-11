@@ -44,7 +44,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     is_superuser = models.BooleanField(default=True)
     is_active = models.BooleanField(default=True)
     cart = models.OneToOneField('app.Cart', related_name="cart_user", on_delete=models.CASCADE, null=True)
-    orders = models.ForeignKey('app.Order', related_name="user_orders", on_delete=models.CASCADE, null=True)
+    orders = models.ManyToManyField('app.Order', related_name="user_orders")
 
     USERNAME_FIELD = "email"
     objects = CustomUserManager()
