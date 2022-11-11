@@ -13,6 +13,7 @@ class CustomUserManager(BaseUserManager):
 
         user.save()
 
+        # create user cart after registration
         current_user = CustomUser.objects.get(email=user)
         cart = Cart.objects.create(user=current_user)
         current_user.cart = cart

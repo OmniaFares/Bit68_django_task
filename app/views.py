@@ -18,7 +18,7 @@ def get_user_cart(request, id):
         # return user cart with its details
         if request.method == 'GET':
             serializer = UserSerializer(user)
-            user_cart = Cart.objects.get(id=serializer.data['cart'])
+            user_cart = Cart.objects.get(id=CartSerializer(user.cart).data['id'])
             return Response(CartSerializer(user_cart).data)
 
 
@@ -31,12 +31,12 @@ def get_user_orders(request, id):
             return Response(status=status.HTTP_404_NOT_FOUND)
         # return details of user orders
         if request.method == 'GET':
-            serializer = UserSerializer(user)
             try:
                 output = []
-                orders = serializer.data['orders']
+                orders = OrderSerializer(user.orders.all(), many=True).data
                 for i in range(len(orders)):
-                    output.append(OrderSerializer(Order.objects.get(id=orders[i])).data)
+                    serialized_order = OrderSerializer(orders[i]).data
+                    output.append(OrderSerializer(Order.objects.get(id=serialized_order['id'])).data)
             except Order.DoesNotExist:
                 return Response(status=status.HTTP_404_NOT_FOUND)
 
