@@ -1,4 +1,4 @@
-# Bit68 Django Task2
+# Bit68 Django Task
 
 ***
 **Instructions to run code**  
