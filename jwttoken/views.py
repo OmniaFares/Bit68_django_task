@@ -7,6 +7,7 @@ import random
 import string
 from rest_framework.views import APIView
 from .serializers import LoginSerializer, RegisterSerializer
+from app.serializer import UserSerializer
 from django.contrib.auth import authenticate
 from rest_framework.response import Response
 from .authentication import Authentication
@@ -65,9 +66,10 @@ class RegisterView(APIView):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        CustomUser.objects._create_user(**serializer.validated_data)
+        user = CustomUser.objects._create_user(**serializer.validated_data)
+        current_user = CustomUser.objects.get(email=user)
 
-        return Response({"success": "Registered Successfully"})
+        return Response({"success": "Registered Successfully", "user": UserSerializer(current_user).data})
 
 
 class GetSecuredInfo(APIView):
